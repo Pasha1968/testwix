@@ -11,9 +11,7 @@ Important:
 - use caching for previous requests
 - no frameworks. Native (Vanilla) Javascript only.
 */ 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+
 
 
   		let baseURL = 'https://api.themoviedb.org/3/';
@@ -22,16 +20,17 @@ function sleep(ms) {
         let APIKEY = '0adbb34bf81e230a73e19aaaeee72637';
 
 
+//at the begining
         let getConfig = function () {
             let url = "".concat(baseURL, 'configuration?api_key=', APIKEY); 
             fetch(url)
             .then(result => {
 			    if(result == 404){
-			        document.getElementById("loading").style.display = 'none';   
+			        document.getElementById("wrong").style.display = 'none';   
 			    }
 			})
 			.then(json => {
-			    document.getElementById("loading").style.display = 'none';   
+			    document.getElementById("wrong").style.display = 'none';   
 			})
 
             .then((result)=>{
@@ -49,13 +48,12 @@ function sleep(ms) {
             });
         }
         
+
+        //search
         let runSearch = function (keyword) {
             let url = ''.concat(baseURL, 'search/movie?api_key=', APIKEY, '&query=', keyword);
             fetch(url)
             .then((result)=>{
-                if(result == 404){
-                    document.getElementById("loading").style.display = 'none';   
-                }
                 return result.json();
             })
             .then((data)=>{
@@ -67,36 +65,47 @@ function sleep(ms) {
                	}
                 
             })
-            .then(json => {
-                document.getElementById("loading").style.display = 'none';   
-            })
         }
 
-		function search(val) {
+        function debounce(func, wait) {
+            let timout = null;
+            return (args) => {
+                clearTimeout(timout)
+                cancel = setTimeout(() => func(...args), wait)
+            }
+        }
+		function handleInput(val) {
 			if(val.length < 2){
-				document.getElementById('output').innerHTML = "at least 3 characters required ";
+				document.getElementById('output').innerHTML = "more symbols needed";
 				console.log(val.length );
 			}else {
-  			   runSearch(val);
+                document.getElementById('output').innerHTML = "loading";
+                return debounce(runSearch(val),100)
   			}
 		}
+
+
+
+          const makeCancelable = (promise) => {
+          let hasCanceled_ = false;
+
+          const wrappedPromise = new Promise((resolve, reject) => {
+            promise.then((val) =>
+              hasCanceled_ ? reject({isCanceled: true}) : resolve(val)
+            );
+            promise.catch((error) =>
+              hasCanceled_ ? reject({isCanceled: true}) : reject(error)
+            );
+          });
+
+          return {
+            promise: wrappedPromise,
+            cancel() {
+              hasCanceled_ = true;
+            },
+          };
+        };
+
+
         
         document.addEventListener('DOMContentLoaded', getConfig);
-        /*******************************
-        SAMPLE SEARCH RESULTS DATA
-        { "vote_count": 2762, 
-            "id": 578, 
-            "video": false, 
-            "vote_average": 7.5, 
-            "title": "Jaws", 
-            "popularity": 16.273358, 
-            "poster_path": "/l1yltvzILaZcx2jYvc5sEMkM7Eh.jpg", 
-            "original_language": "en", 
-            "original_title": "Jaws", 
-            "genre_ids": [ 27, 53, 12 ], 
-            "backdrop_path": "/slkPgAt1IQgxZXNrazEcOzhAK8f.jpg", 
-            "adult": false, 
-            "overview": "An insatiable great white shark terrorizes the townspeople of Amity Island, The police chief, an oceanographer and a grizzled shark hunter seek to destroy the bloodthirsty beast.", 
-            "release_date": "1975-06-18" 
-        }
-        *******************************/
