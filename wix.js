@@ -11,6 +11,10 @@ Important:
 - use caching for previous requests
 - no frameworks. Native (Vanilla) Javascript only.
 */ 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
   		let baseURL = 'https://api.themoviedb.org/3/';
         let configData = null;
@@ -38,7 +42,7 @@ Important:
                 configData = data.images;
                 console.log('config:', data);
                 console.log('config fetched');
-                runSearch('a')
+                runSearch(' ')
             })
             .catch(function(err){
                console.log(err);
@@ -48,7 +52,12 @@ Important:
         let runSearch = function (keyword) {
             let url = ''.concat(baseURL, 'search/movie?api_key=', APIKEY, '&query=', keyword);
             fetch(url)
-            .then(result=>result.json())
+            .then((result)=>{
+                if(result == 404){
+                    document.getElementById("loading").style.display = 'none';   
+                }
+                return result.json();
+            })
             .then((data)=>{
             	if (data.total_results==0)
             	{
@@ -58,6 +67,9 @@ Important:
                	}
                 
             })
+            .then(json => {
+                document.getElementById("loading").style.display = 'none';   
+            })
         }
 
 		function search(val) {
@@ -65,7 +77,7 @@ Important:
 				document.getElementById('output').innerHTML = "at least 3 characters required ";
 				console.log(val.length );
 			}else {
-  			runSearch(val);
+  			   runSearch(val);
   			}
 		}
         
