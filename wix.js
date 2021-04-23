@@ -12,7 +12,7 @@ Important:
 - no frameworks. Native (Vanilla) Javascript only.
 */ 
 
-  let baseURL = 'https://api.themoviedb.org/3/';
+  		let baseURL = 'https://api.themoviedb.org/3/';
         let configData = null;
         let baseImageURL = null;
         let APIKEY = '0adbb34bf81e230a73e19aaaeee72637';
@@ -21,6 +21,15 @@ Important:
         let getConfig = function () {
             let url = "".concat(baseURL, 'configuration?api_key=', APIKEY); 
             fetch(url)
+            .then(result => {
+			    if(result == 404){
+			        document.getElementById("loading").style.display = 'none';   
+			    }
+			})
+			.then(json => {
+			    document.getElementById("loading").style.display = 'none';   
+			})
+
             .then((result)=>{
                 return result.json();
             })
@@ -32,7 +41,7 @@ Important:
                 runSearch('a')
             })
             .catch(function(err){
-                alert(err);
+               console.log(err);
             });
         }
         
@@ -41,15 +50,23 @@ Important:
             fetch(url)
             .then(result=>result.json())
             .then((data)=>{
-                //process the returned data
-                document.getElementById('output').innerHTML = JSON.stringify(data, null, 4);
-                //work with results array...
+            	if (data.total_results==0)
+            	{
+					document.getElementById('output').innerHTML = "Nothing to show";
+            	} else {
+                	document.getElementById('output').innerHTML = JSON.stringify(data, null, 4);
+               	}
                 
             })
         }
 
 		function search(val) {
+			if(val.length < 2){
+				document.getElementById('output').innerHTML = "at least 3 characters required ";
+				console.log(val.length );
+			}else {
   			runSearch(val);
+  			}
 		}
         
         document.addEventListener('DOMContentLoaded', getConfig);
