@@ -62,6 +62,16 @@ Important:
 					document.getElementById('output').innerHTML = "Nothing to show";
             	} else {
                 	document.getElementById('output').innerHTML = JSON.stringify(data, null, 4);
+                    for (const [key, value] of Object.entries(data.results)) {
+                        console.log(value);
+                        var tag = document.createElement("h3");
+                        var text = document.createTextNode(`${value.original_title}`);
+                        tag.appendChild(text);
+                        var element = document.getElementById("output");
+                        element.appendChild(tag);
+                     // document.getElementById('output').innerHTML = `<div><h3>${value.original_title} </h3> </div>`
+                    }
+                    //data.forEach(element => console.log(element));
                	}
                 
             })
@@ -80,7 +90,8 @@ Important:
 				console.log(val.length );
 			}else {
                 document.getElementById('output').innerHTML = "loading";
-                return debounce(runSearch(val),100)
+                let deb = debounce(runSearch,1000);
+                return deb(val)
   			}
 		}
 
@@ -97,6 +108,7 @@ Important:
               hasCanceled_ ? reject({isCanceled: true}) : reject(error)
             );
           });
+
 
           return {
             promise: wrappedPromise,
