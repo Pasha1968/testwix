@@ -51,7 +51,7 @@ Important:
 
         //search
         let runSearch = function (keyword) {
-            let url = ''.concat(baseURL, 'search/movie?api_key=', APIKEY, '&query=', keyword);
+            let url = ''.concat(baseURL, 'search/movie?api_key=', APIKEY, '&query=', keyword);//,'&page=1');
             fetch(url)
             .then((result)=>{
                 return result.json();
@@ -67,8 +67,31 @@ Important:
                         var tag = document.createElement("h3");
                         var text = document.createTextNode(`${value.original_title}`);
                         tag.appendChild(text);
+                        // var element = document.getElementById("output");
+                        
+
+                        var tag1 = document.createElement("img");
+                        tag1.width = 500;
+                        tag1.heigth = 750;
+                        // var text = document.createTextNode(`${value.original_title}`);
+                        if (value.poster_path){
+                            tag1.src = 'https://image.tmdb.org/t/p/w500'+value.poster_path;
+                        }
+                        else{
+                            tag1.src ='http://underscoremusic.co.uk/site/wp-content/uploads/2014/05/no-poster.jpg';
+                        }
+
+                        var tag2 =document.createElement("p");  
+                        tag2.style.cssText = 'width:50vh;';
+                        var overview = document.createTextNode(`${value.overview}`);
+                        tag2.appendChild(overview);
+
+
+
                         var element = document.getElementById("output");
                         element.appendChild(tag);
+                        element.appendChild(tag1);
+                        element.appendChild(tag2);
                      // document.getElementById('output').innerHTML = `<div><h3>${value.original_title} </h3> </div>`
                     }
                     //data.forEach(element => console.log(element));
@@ -161,7 +184,7 @@ Important:
 				console.log(val.length );
 			}else {
                 document.getElementById('output').innerHTML = "loading";
-                let deb = debounce(runSearch,5000);
+                let deb = debounce(runSearch,2000);
                 console.log(typeof(deb));
                 return deb(val);
   			   // return runSearch(val);
