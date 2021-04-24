@@ -41,7 +41,7 @@ Important:
                 configData = data.images;
                 console.log('config:', data);
                 console.log('config fetched');
-                runSearch(' ')
+                runSearch('aquamAn')
             })
             .catch(function(err){
                console.log(err);
@@ -77,22 +77,95 @@ Important:
             })
         }
 
-        function debounce(func, wait) {
-            let timout = null;
-            return (args) => {
-                clearTimeout(timout)
-                cancel = setTimeout(() => func(...args), wait)
-            }
+        // function debounce(func, wait) {
+        //     let timout = null;
+        //     return (args) => {
+        //         clearTimeout(timout)
+        //         cancel = setTimeout(() => func(...args), wait)
+        //     }
+        // }
+
+    function debounce(func, wait, immediate){
+      var timeout, args, context, timestamp, result;
+      if (null == wait) wait = 100;
+
+      function later() {
+        var last = Date.now() - timestamp;
+
+        if (last < wait && last >= 0) {
+          timeout = setTimeout(later, wait - last);
+        } else {
+          timeout = null;
+          if (!immediate) {
+            result = func.apply(context, args);
+            context = args = null;
+          }
         }
+      };
+
+      var debounced = function(){
+        context = this;
+        args = arguments;
+        timestamp = Date.now();
+        var callNow = immediate && !timeout;
+        if (!timeout) timeout = setTimeout(later, wait);
+        if (callNow) {
+          result = func.apply(context, args);
+          context = args = null;
+        }
+
+        return result;
+      };
+
+      debounced.clear = function() {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
+      };
+      
+      debounced.flush = function() {
+        if (timeout) {
+          result = func.apply(context, args);
+          context = args = null;
+          
+          clearTimeout(timeout);
+          timeout = null;
+        }
+      };
+
+      return debounced;
+    };
+
+
+
+
+        // function debounce(f, ms) {
+
+        //   let isCooldown = false;
+
+        //   return function() {
+        //     if (isCooldown) return;
+
+        //     f.apply(this, arguments);
+
+        //     isCooldown = true;
+
+        //     setTimeout(() => isCooldown = false, ms);
+        //   };
+
+        // }
 		function handleInput(val) {
 			if(val.length < 2){
 				document.getElementById('output').innerHTML = "more symbols needed";
 				console.log(val.length );
 			}else {
                 document.getElementById('output').innerHTML = "loading";
-                let deb = debounce(runSearch,1000);
-                return deb(val)
-  			}
+                let deb = debounce(runSearch,5000);
+                console.log(typeof(deb));
+                return deb(val);
+  			   // return runSearch(val);
+            }
 		}
 
 
