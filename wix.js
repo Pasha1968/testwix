@@ -18,7 +18,10 @@ Important:
         let configData = null;
         let baseImageURL = null;
         let APIKEY = '0adbb34bf81e230a73e19aaaeee72637';
+        let input = document.getElementById('search2');
 
+        // Init a timeout variable to be used below
+        let timeout = null;
 
 //at the begining
         let getConfig = function () {
@@ -101,57 +104,6 @@ Important:
         }
 
 
-    function debounce(func, wait, immediate){
-      var timeout, args, context, timestamp, result;
-      if (null == wait) wait = 100;
-
-      function later() {
-        var last = Date.now() - timestamp;
-
-        if (last < wait && last >= 0) {
-          timeout = setTimeout(later, wait - last);
-        } else {
-          timeout = null;
-          if (!immediate) {
-            result = func.apply(context, args);
-            context = args = null;
-          }
-        }
-      };
-
-      var debounced = function(){
-        context = this;
-        args = arguments;
-        timestamp = Date.now();
-        var callNow = immediate && !timeout;
-        if (!timeout) timeout = setTimeout(later, wait);
-        if (callNow) {
-          result = func.apply(context, args);
-          context = args = null;
-        }
-
-        return result;
-      };
-
-      debounced.clear = function() {
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
-        }
-      };
-      
-      debounced.flush = function() {
-        if (timeout) {
-          result = func.apply(context, args);
-          context = args = null;
-          
-          clearTimeout(timeout);
-          timeout = null;
-        }
-      };
-
-      return debounced;
-    };
 
 
 
@@ -159,15 +111,31 @@ Important:
             document.getElementById(div).innerHTML = "loading";
         }
 
+
+        // Get the input box
+        
+        function debounce(callback, wait) {
+          let timeout;
+          return (...args) => {
+              clearTimeout(timeout);
+              timeout = setTimeout(function () { callback.apply(this, args); }, wait);
+          };
+        }
+        // Listen for keystroke events
+        input.addEventListener('keyup', debounce( () => {
+            handleInput(input.value);
+        }, 500))
+
+
+
+
 		function handleInput(val) {
 			if(val.length < 2){
 				document.getElementById('output').innerHTML = "more symbols needed";
 				console.log(val.length );
 			}else {
                 showLoading('output');
-                // document.getElementById('output').innerHTML = "loading";
-                let deb = debounce(runSearch,2000);
-                return deb(val,'output');
+                return runSearch(val,'output')
             }
 		}
 
