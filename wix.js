@@ -61,7 +61,7 @@ Important:
             	{
 					document.getElementById(divout).innerHTML = "Nothing to show";
             	} else {
-                	document.getElementById(divout).innerHTML = JSON.stringify(data, null, 4);
+                	document.getElementById(divout).innerHTML = null;
                     for (const [key, value] of Object.entries(data.results)) {
                         console.log(value);
                         var tag = document.createElement("h3");
@@ -100,13 +100,6 @@ Important:
             })
         }
 
-        // function debounce(func, wait) {
-        //     let timout = null;
-        //     return (args) => {
-        //         clearTimeout(timout)
-        //         cancel = setTimeout(() => func(...args), wait)
-        //     }
-        // }
 
     function debounce(func, wait, immediate){
       var timeout, args, context, timestamp, result;
@@ -162,31 +155,19 @@ Important:
 
 
 
+        function showLoading(div) {
+            document.getElementById(div).innerHTML = "loading";
+        }
 
-        // function debounce(f, ms) {
-
-        //   let isCooldown = false;
-
-        //   return function() {
-        //     if (isCooldown) return;
-
-        //     f.apply(this, arguments);
-
-        //     isCooldown = true;
-
-        //     setTimeout(() => isCooldown = false, ms);
-        //   };
-
-        // }
 		function handleInput(val) {
 			if(val.length < 2){
 				document.getElementById('output').innerHTML = "more symbols needed";
 				console.log(val.length );
 			}else {
-                document.getElementById('output').innerHTML = "loading";
+                showLoading('output');
+                // document.getElementById('output').innerHTML = "loading";
                 let deb = debounce(runSearch,2000);
                 return deb(val,'output');
-  			   // return runSearch(val);
             }
 		}
 
