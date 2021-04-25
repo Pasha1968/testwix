@@ -50,7 +50,7 @@ Important:
         
 
         //search
-        let runSearch = function (keyword) {
+        let runSearch = function (keyword,divout) {
             let url = ''.concat(baseURL, 'search/movie?api_key=', APIKEY, '&query=', keyword);//,'&page=1');
             fetch(url)
             .then((result)=>{
@@ -59,9 +59,9 @@ Important:
             .then((data)=>{
             	if (data.total_results==0)
             	{
-					document.getElementById('output').innerHTML = "Nothing to show";
+					document.getElementById(divout).innerHTML = "Nothing to show";
             	} else {
-                	document.getElementById('output').innerHTML = JSON.stringify(data, null, 4);
+                	document.getElementById(divout).innerHTML = JSON.stringify(data, null, 4);
                     for (const [key, value] of Object.entries(data.results)) {
                         console.log(value);
                         var tag = document.createElement("h3");
@@ -71,8 +71,8 @@ Important:
                         
 
                         var tag1 = document.createElement("img");
-                        tag1.width = 500;
-                        tag1.heigth = 750;
+                        tag1.width = 300;
+                        tag1.heigth = 450;
                         // var text = document.createTextNode(`${value.original_title}`);
                         if (value.poster_path){
                             tag1.src = 'https://image.tmdb.org/t/p/w500'+value.poster_path;
@@ -88,7 +88,7 @@ Important:
 
 
 
-                        var element = document.getElementById("output");
+                        var element = document.getElementById(divout);
                         element.appendChild(tag);
                         element.appendChild(tag1);
                         element.appendChild(tag2);
@@ -185,8 +185,7 @@ Important:
 			}else {
                 document.getElementById('output').innerHTML = "loading";
                 let deb = debounce(runSearch,2000);
-                console.log(typeof(deb));
-                return deb(val);
+                return deb(val,'output');
   			   // return runSearch(val);
             }
 		}
